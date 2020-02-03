@@ -1,0 +1,11 @@
+Photo gallery
+*************
+
+author link
+*******************
+https://author-wb-stage62.adobecqms.net/content/wb-home/en/about/archives/photo-gallery/photo-gallery-landing.html?wcmmode=disabled
+
+
+file js 
+************
+https://author-wb-stage62.adobecqms.net/miscadmin#/etc/designs/wbrrdesign/clientlibs-photogallery/components/photo_gallery_listing/js

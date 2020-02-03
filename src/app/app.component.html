@@ -1,20 +1,101 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+<div class="row full-row-gray-components" style="padding: 16px 0px 16px 0px">
+<div class="container">
+    <div class="row feature-content">
+  
+      <div class="col-lg-12">
+          <div class="feature-content-collapse">
+  
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="collapse-title">Featured Content</h1>
+                </div>
+            </div>
+  
+            <div class="row">
+                <div class="col-lg-12">
+                    <mat-expansion-panel [expanded]="true">
+                        <mat-expansion-panel-header [expandedHeight]="'*'" [collapsedHeight]="'*'">
+                        </mat-expansion-panel-header>
+                        <div class="col-lg-1"></div>
+                        <div class="col-lg-10">
+                            <app-carousel [description]="descposts" [image]="imageposts" [link]="linkposts"></app-carousel>
+                        </div>
+                        <div class="col-lg-1"></div>
+                    </mat-expansion-panel>
+                </div>
+           </div>
+  
+        </div>
+    </div>
+  </div>
+  </div>
 </div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
 
+<div class="row full-row-white-components" style="padding: 32px 0px 64px 0px;">
+    <div class="container">
+      <div class="row">
+
+          <div class="col-lg-3 col-md-3 col-xs-12 hidden-sm hidden-xs" [ngClass]="{'left-section': isFacetsCollapsed}">
+              <div id="wrapper" [ngClass]="{'toggled-2': isFacetsCollapsed}">
+                  <button class="sidebar-toggle" (click)="updateFacetsCollapsed(!isFacetsCollapsed)"> 
+                      <i class="sidebar-arrow" [ngClass]="sideBarArrow"></i>                            
+                  </button>
+                  <div id="sidebar-wrapper">
+                      <div class="sidebar-heading">
+                          <i class="fa fa-list-ul"></i><h4 class="h4">filter</h4>
+                          <div class="clear-all">
+                              <button type="button" class="reset-btn" (click)="onClearAll()">Clear All x</button>
+                          </div>
+                      </div>
+<facets #facet [facetParameters]="facetParameters"  [facetsjson]="facetsjson" (selectedFacets)="mobileFacets.getSelectedFacets($event)" (outParameters)="updateParameter($event)" ></facets>
+</div>   
+ 
+              </div>
+          </div>
+
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12" [ngClass]="{'right-section': isFacetsCollapsed}">
+          <search [url]="url"  [qterm]="qterm"  (outParameters)="updateParameter($event)" ></search>
+            <div class="row">
+               <div class="col-lg-12 col-md-12 col-sm-8 col-xs-12">
+                <div class=""> 
+              <p class="blurb-text">
+                  <b>
+                  <div *ngIf="(total!==0)" > 
+                  Showing {{showingFrom}} - {{showingTo}} of {{total}} results 
+                    </div>
+                  <div *ngIf="(total===0)" style="font-weight: 600;" > 
+               Sorry, there are no results that match your search.<a href=""> Please try again</a>  
+                  </div>
+                 </b>
+                </p>         
+              </div> 
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-8">
+                    <div class="sidebar-nav-mobile hidden-lg hidden-md" (click)="isCollapsed=!isCollapsed">
+                        <div class="sidebar-heading">
+                            <span class="dropdown-toggle">
+                                <h4 class="h4">{{refineBy}} <i class="fa fa-angle-down arrow-down"></i></h4>
+                            </span> 
+                        </div>
+                    </div>                      
+            </div>
+                <mobilefacets #mobileFacets [isCollapsed]="isCollapsed"  [facetParameters]="facetParameters" [facetsjson]="facetsjson"></mobilefacets> 
+               </div>
+               <hr>
+    <gallery   [keys]="keys" [total]="total" [url]="url"  [detailPath]='detailPath'  (finalResponse)="udpatedValues($event)" (outParameters)="updateParameter($event)" ></gallery>
+          
+            
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div id="loadMore1" *ngIf="isLoadMore">
+                    <a (click)="loadMore(); false" class="btn-default btn-lg _loop_btn_secondary">Load more</a>
+                </div><!-- End loader -->
+                <div class="totop" *ngIf="isScrollToTop" [@fadeInOut]> 
+                    <a id="totop" (click)="onScrollToTop(); false">Back to top</a> 
+                </div>
+            </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>

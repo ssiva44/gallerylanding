@@ -1,0 +1,23 @@
+<div class="feature-content-carousal">
+        <ngx-carousel [inputs]="carouselTileOne">
+            <ngx-tile NgxCarouselItem *ngFor="let val of image;let i=index;">
+                    
+                <div class="wBg">
+                    <div class="tile">
+                        <img  src="{{val}}" />
+                     </div>
+                     <ng-container *ngIf="link[i].trim() === '';then second else third"></ng-container>
+                     <ng-template #second>
+                            <p class="blurb-text">{{description[i]}}</p>
+                     </ng-template>
+                     <ng-template #third>
+                            <p class="blurb-text"><a [href]="link[i]">{{description[i]}}</a></p>
+                     </ng-template>
+                </div>
+            </ngx-tile>
+            <span NgxCarouselPrev class="leftRs glyphicon glyphicon-menu-left"></span>
+            <span NgxCarouselNext class="rightRs glyphicon glyphicon-menu-right"></span>
+         
+        </ngx-carousel>
+  </div>
+ 

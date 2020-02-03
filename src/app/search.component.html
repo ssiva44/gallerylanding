@@ -1,0 +1,19 @@
+<div class="row">
+	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+	    <div class="listing_search">
+				<div class="row">
+						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+	    	<div class="header-search-section">		    	
+		        <form class="input-group" (ngSubmit)="onSearch()">
+			    	<input type="text" class="search-input-field-1" label="search" title="search" placeholder="{{placeholder}}"  searchText="searchText" [(ngModel)]="searchValue"  [ngModelOptions]="{standalone: true}">
+			    	<i class="fa fa-search search-submit-icon search-comp" (click)="onSearch()"></i>			    	
+				</form>			
+			</div>
+			</div>
+			</div>
+
+	    </div>
+	</div>
+</div>
+
+

@@ -1,0 +1,43 @@
+<div class="col-xs-12 hidden-lg hidden-md">
+        <div class="refine-select-button-list">
+           
+           <span class="refine-select-button" *ngFor="let facet of selectedFacetItems | keys">
+               {{facet.value}}
+               <a href="?{{facetParameters | showing :facet.key}}" >
+                   <i class="fa fa-times delete-item"></i>
+               </a>
+           </span>		
+       </div> 
+       <div id="refine-collapse1" class="sidebar-collapse" [@refineFadeInOut]="isCollapsed">
+            <div class="sidebar-slider">
+                <ul class="padd-16 col-xs-6 col-sm-6" [ngClass]="{'collapse' : isAllFacets}">
+                        
+                        <li class="sidebar-list-item" (click)="onSelectFacetName(facet.facetName)" *ngFor="let facet of facetposts">
+                            <a class="sidebar-menu-trigger">{{facet.facetLabel}}</a>
+                        </li>			
+                    </ul>
+                    <ul class="padd-16 col-xs-6 col-sm-6">
+                            <li class="sidebar-list" [ngClass]="{'collapse' : isFacets}">
+                    <ul *ngFor="let facet of facetposts | mobileFacetContains : facetName; let i = index;">
+                            <li><a class="sidebar-menu-trigger-back" (click)="onBack()"><b>Back</b></a></li>
+                            
+                            
+                                <li *ngFor="let word of facet.facetItems| facetContains : selectedFacetItems : facet.facetName : limitFacets : i">
+                                    <a href="?{{facetParameters | timeFrameContains : facet.facetName : word}}"><span class="sidebar-sublist-item">{{word}}</span><span class="list-item-num"></span></a>
+                              
+                            
+                                <a class="remove-btn" href="?{{facetParameters | showing :facet.facetName}} " *ngIf="selectedFacetItems | objectContains : facet.facetName">
+                                    <i class="fa fa-times-circle-o"></i>
+                                </a>
+                            </li>
+                            <div class="expand-link" *ngIf="(facet.facetItems | length) > 6  && !(selectedFacetItems | objectContains : facet.facetName)">
+                                <a *ngIf="!(limitFacets | contains : i)" (click)="onSeeMore(i); false">See More +</a>
+                                <a *ngIf="(limitFacets | contains : i)" (click)="onSeeLess(i); false">See Less -</a>	
+                            </div>
+                        </ul>
+                    </li>
+                    </ul>
+                    </div>
+                    </div>
+
+       </div>

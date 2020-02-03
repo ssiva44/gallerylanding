@@ -1,0 +1,24 @@
+
+
+<ul class="sidebar-list"  *ngFor="let facet of facetposts; let i = index">
+   
+   
+    <li class="sidebar-list-item" (click)="onCollapse(facet.facetName)">
+  
+  <a class="sidebar-link" attr.aria-expanded="{{(collapseFacets | contains : facet.facetName)}}">{{facet.facetLabel |locale }}</a>
+  </li>        
+  <ul  class="sidebar-sublist" [@facetFadeInOut]="collapseFacets | facetAnimation : facet.facetName">
+      <li *ngFor="let word of facet.facetItems| facetContains : selectedFacetItems : facet.facetName : limitFacets : i">
+       <a href="?{{facetParameters | timeFrameContains : facet.facetName : word}}"><span class="sidebar-sublist-item">{{word}}</span><span class="list-item-num"></span></a>
+    
+       
+  <a class="remove-btn" href="?{{facetParameters | showing :facet.facetName}} " *ngIf="selectedFacetItems | objectContains : facet.facetName">
+      <i class="fa fa-times-circle-o"></i>
+  </a>
+</li>
+  <li class="expand-link" *ngIf="(facet.facetItems | length) > 6 && !(selectedFacetItems | objectContains : facet.facetName)">
+			<a *ngIf="!(limitFacets | contains : i)" (click)="onSeeMore(i); false">See More +</a>
+			<a *ngIf="(limitFacets | contains : i)" (click)="onSeeLess(i); false">See Less -</a>		
+		</li>
+    </ul>
+  </ul>
