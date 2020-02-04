@@ -143,6 +143,7 @@ ngOnInit() {
   this.ref = this.getParameterByName('ref', currentUrl);
   let parameters = this.addParam();
   let displayUrl = window.location.href
+  
   let displayUrlSplit = displayUrl.split('?');
   if(displayUrlSplit.length>1){
     let displaySplit = displayUrl.split('&id');
@@ -151,12 +152,15 @@ ngOnInit() {
       PageCount = displaySplit[1].split("pC=");
       if(PageCount.length>1){
         let totalpages = PageCount[1].split('&');
-        this.initialpageSize = parseInt(totalpages[0]);
+        if(totalpages[0]!=""){
+          this.initialpageSize = parseInt(totalpages[0]);
+        }
       }
    }
   }
   let decodedUrl=decodeURI(this.url);
     let api=decodedUrl.split("rows=")[0];
+    
   if(parameters.length!=0){
     
      this.url= api+"rows="+this.initialpageSize+"&srt=cataloged&order=desc&"+parameters[0]["key"]+"="+parameters[0]["value"]+""; 
