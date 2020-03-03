@@ -1,7 +1,11 @@
-<div class="row full-row-gray-components" style="padding: 16px 0px 16px 0px">
+
+<div class="row full-row-gray-components" >
 <div class="container">
+        <div class="ajax-div" *ngIf="loading">    
+                <img src="{{imagePath}}" class="ajax-loader" alt="Loading"/>
+              </div>
     <div class="row feature-content">
-  
+       
       <div class="col-lg-12">
           <div class="feature-content-collapse">
   
@@ -42,23 +46,27 @@
                   </button>
                   <div id="sidebar-wrapper">
                       <div class="sidebar-heading">
-                          <i class="fa fa-list-ul"></i><h4 class="h4">filter</h4>
+                          <i class="fa fa-list-ul"></i><h4 class="h4 filter-align">{{filter}}</h4>
                           <div class="clear-all">
                               <button type="button" class="reset-btn" (click)="onClearAll()">Clear All x</button>
                           </div>
                       </div>
-<facets #facet [facetParameters]="facetParameters"  [facetsjson]="facetsjson" (selectedFacets)="mobileFacets.getSelectedFacets($event)" (outParameters)="updateParameter($event)" ></facets>
+<facets #facet [facetParameters]="facetParameters"  [facetsjson]="facetsjson"
+ (selectedFacets)="mobileFacets.getSelectedFacets($event)" 
+ (outParameters)="updateParameter($event)" 
+ ></facets>
 </div>   
  
               </div>
           </div>
 
         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12" [ngClass]="{'right-section': isFacetsCollapsed}">
-          <search [url]="url"  [qterm]="qterm"  (outParameters)="updateParameter($event)" ></search>
+          <search [url]="url" [facetParameters]="facetParameters"  [qterm]="qterm"  (outParameters)="updateParameter($event)" ></search>
+
             <div class="row">
                <div class="col-lg-12 col-md-12 col-sm-8 col-xs-12">
                 <div class=""> 
-              <p class="blurb-text">
+              <div class="blurb-text">
                   <b>
                   <div *ngIf="(total!==0)" > 
                   Showing {{showingFrom}} - {{showingTo}} of {{total}} results 
@@ -67,29 +75,41 @@
                Sorry, there are no results that match your search.<a href=""> Please try again</a>  
                   </div>
                  </b>
-                </p>         
+              </div>         
               </div> 
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-8">
                     <div class="sidebar-nav-mobile hidden-lg hidden-md" (click)="isCollapsed=!isCollapsed">
+                           
                         <div class="sidebar-heading">
                             <span class="dropdown-toggle">
                                 <h4 class="h4">{{refineBy}} <i class="fa fa-angle-down arrow-down"></i></h4>
                             </span> 
                         </div>
-                    </div>                      
+                        
+                    </div>  
+                                        
             </div>
-                <mobilefacets #mobileFacets [isCollapsed]="isCollapsed"  [facetParameters]="facetParameters" [facetsjson]="facetsjson"></mobilefacets> 
+           
+                <mobilefacets #mobileFacets [isCollapsed]="isCollapsed"  
+                [facetParameters]="facetParameters"
+                 [facetsjson]="facetsjson" (outParameters)="updateParameter($event)"
+                 (outFacet)="facet.onFacetItem($event.facet, $event.itemName)"></mobilefacets> 
                </div>
                <hr>
-    <gallery   [keys]="keys" [total]="total" [url]="url"  [detailPath]='detailPath'  (finalResponse)="udpatedValues($event)" (outParameters)="updateParameter($event)" ></gallery>
+    <gallery [facetParameters]="facetParameters" (loading)="hideLoading($event)" 
+    [keys]="keys" [total]="total" [url]="url"  
+    [detailPath]='detailPath'  
+    (finalResponse)="udpatedValues($event)" (outParameters)="updateParameter($event)" 
+    ></gallery>
           
             
           <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div id="loadMore1" *ngIf="isLoadMore">
+                <!-- <div id="loadMore1" *ngIf="isLoadMore">
                     <a (click)="loadMore(); false" class="btn-default btn-lg _loop_btn_secondary">Load more</a>
-                </div><!-- End loader -->
+                </div> -->
+               
                 <div class="totop" *ngIf="isScrollToTop" [@fadeInOut]> 
                     <a id="totop" (click)="onScrollToTop(); false">Back to top</a> 
                 </div>
@@ -99,3 +119,7 @@
       </div>
     </div>
   </div>
+
+
+
+  

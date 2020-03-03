@@ -11610,3 +11610,79 @@ html[lang="zh"] .btn-sm {
   text-decoration: none !important;
   color: #787878!important;
 }
+.ajax-div {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: grey;
+  opacity: .8
+}
+.ajax-loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -32px;
+  margin-top: -32px;
+  display: block
+}
+.filter-align{
+margin-left: 8px !important;
+}
+._loop_primary_checkbox {
+  position: absolute;
+  opacity: 0; }
+  ._loop_primary_checkbox + label {
+    position: relative;
+    padding: 0;
+    cursor: default;
+    font-size: 14px;
+    line-height: 22px;
+    font-weight: normal;
+    cursor: pointer;
+    /*&:hover {
+      color: #0071BC;
+    }*/ }
+    ._loop_primary_checkbox + label:before {
+      content: '';
+      margin-right: 8px;
+      display: inline-block;
+      vertical-align: text-top;
+      padding: 4px;
+      width: 20px;
+      height: 20px;
+      background: #FAFDFF;
+      border: 1px solid #D8E7F5;
+      box-shadow: inset 0px 3px 0px 0px #F0F7FE;
+      cursor: pointer;
+      float: left; }
+
+._loop_primary_checkbox:checked + label:before {
+  background: #0071BC;
+  box-shadow: inset 0px 3px 0px 0px #0071BC; }
+
+._loop_primary_checkbox:checked:disabled + label:before {
+  background: #FAFDFF;
+  border: 1px solid #D8E7F5;
+  box-shadow: inset 0px 1px 0px 0px #F0F7FE; }
+
+._loop_primary_checkbox:checked:disabled + label:after {
+  color: #4cbb88; }
+
+._loop_primary_checkbox:disabled + label {
+  opacity: 0.6; }
+
+
+
+._loop_primary_checkbox:checked + label:after {
+  content: "\f00c";
+  font-family: 'FontAwesome';
+  font-size: 12px;
+  position: absolute;
+  left: 4px;
+  top: 0;
+  color: #fff; }
+
+  

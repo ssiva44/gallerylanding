@@ -4,6 +4,7 @@ export * from "./length.pipe";
 export * from "./contains.pipe";
 export * from "./objectContains.pipe";
 export * from "./facetContains.pipe";
+export * from "./facet-checked.pipe";
 export * from "./facetAnimation.pipe";
 export * from "./timeFrameContains.pipe";
 export * from "./locale.pipe";

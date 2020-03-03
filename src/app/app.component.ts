@@ -1,10 +1,14 @@
 import { Component,ViewChild,OnInit ,Input} from '@angular/core';
 import { URLSearchParams, } from '@angular/http';
-import { Http,Response } from '@angular/http';
+import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { GalleryComponent } from './gallery.component';
-
+import { SearchComponent } from './search.component';
+import { FacetsComponent } from './facets.component';
+import * as $ from "jquery";
 import {  ElementRef, Inject, HostListener } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
+import { CommonService } from './common.service';
 @Component({
   selector: 'gallerysearch',
   templateUrl: './app.component.html',
@@ -14,11 +18,15 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
       transition('void => *', [style({opacity:0}), animate(500, style({opacity:1}))]),
       transition('* => void', [animate(500, style({opacity:0}))])
     ]),		
-  ]	
+  ]
 })
 export class AppComponent {
   @ViewChild(GalleryComponent)
   private gallery: GalleryComponent;
+  @ViewChild(SearchComponent)
+  private search: SearchComponent;
+  @ViewChild(FacetsComponent)
+  private facet: FacetsComponent;
   facetsjson:any;
   imageposts:any[]=[];
   descposts:any[]=[];
@@ -26,6 +34,7 @@ export class AppComponent {
   @Input() descriptionObject:any;
   @Input() imagepathObject:any;
   @Input() linkpathObject:any;
+  
 //url: string="http://wbwcfe.worldbank.org/photoarchive/api/archives/search?query=%7b%22term%22:%7b%22operator%22:%22operatorAnd%22,%22subqueries%22:%5b%7b%22operator%22:%22matchUnparsedQueryString%22,%22values%22:%5b%22worldbank%22%5d%7d,%7b%22field%22:%22WBG%20Eligible%20for%20Public%20Release%22,%22operator%22:%22equalValue%22,%22values%22:%5b%22yes%22%5d%7d,%20%7b%22field%22:%22For%20Public%20Download%22,%22operator%22:%22equalValue%22,%22values%22:%5b%22Yes%22%5d%7d%5d%7d,%22startingIndex%22:0,%22pageSize%22:15,%22sortOptions%22:%7b%22field%22:%22Cataloged%22,%22order%22:%22desc%22%7d%7d";
   queryParameter: string;	
   url: string;
@@ -59,17 +68,25 @@ export class AppComponent {
   keyword_excat:any;Fkey:any;Fvalue:any;
   selectedFacetItems: any[];
   queryparams:any[];
-  refineBy: string = 'RefineBy';	
+  refineBy: string = 'Refine By';	
   facetjson:any[] = [];	field:any;value:any;
   keys: string = '&keys=Today,Past7Days,PastMonth,PastYear,RefineBy,TimeFrame,SpecificDateRange,StartDate,EndDate,SeeMore,SeeLess,SortBy,ShowingResults,Date,addtocalendar,Upcoming,Past,BestMatch,job_title,alphabetical,NoResultsMsgFuture,NoResultsMsgPast';
   facetsNames: any = {};
   facetLabels: any = {};
-  constructor(private element: ElementRef ,private http:Http, eRef:ElementRef) {				
+  imagePath: string;
+  filter:string;
+  selectedItems: any[] = [];
+  isBack:boolean=false;
+ // isFacetsLoading:any[];
+  //loading: boolean;
+  constructor(private element: ElementRef ,private http:HttpClient, eRef:ElementRef, 
+    private spinnerService: Ng4LoadingSpinnerService,private service:CommonService) {				
   this.wcmMode = 'wcmmode=disabled';
   this.descriptionObject=eRef.nativeElement.getAttribute('descriptionObject');
   this.imagepathObject=eRef.nativeElement.getAttribute('imagepathObject');
   this.linkpathObject = eRef.nativeElement.getAttribute('linkpathObject');
   this.url = eRef.nativeElement.getAttribute('url');
+  this.imagePath = eRef.nativeElement.getAttribute('imagePath');
   this.imagepathObject=JSON.parse(this.imagepathObject);
   this.descriptionObject=JSON.parse(this.descriptionObject);
   this.linkpathObject = JSON.parse(this.linkpathObject);
@@ -91,44 +108,15 @@ export class AppComponent {
     this.linkposts.push(linkresources[keylink]);  
     }
   }
-  let decodedUrl=decodeURI(this.url);
-  let api=decodedUrl.split("=json")[0];
   this.showingFrom = 1;	
-  let response = this.http.get(api+"=json&fct=wbg_country,wbg_year,wbg_topics,wbg_region&rows=0", '').map((response: Response) => {
-    
-    return response.json();
-  });
-  let facets = []
-  response.subscribe(
-    res => {
-    
-    let facetAttribute = res["photoarchives"]["facets"];
-     let facetLabels = {
-      'wbg_topics' : 'WBG Topics',
-      'wbg_country' : 'WBG Country',
-      'wbg_region' : 'WBG Region',
-      'wbg_year' : 'WBG Decade'
-      }
-  Object.keys(facetAttribute).forEach(key => {
-    let facetsAllValues=[];
-    Object.keys(facetAttribute[key]).forEach(keys => {
-      facetsAllValues.push(facetAttribute[key][keys].label);
-    })
-    facets.push({
-      facetLabel: facetLabels[key],
-      facetName: key,
-      facetItems: facetsAllValues       
-    });   
-  }); 
-  this.facetsjson = facets
-     
-  });  
+ 
 }
 
 ngOnInit() {
   this.sideBarArrow =  'fa fa-angle-left' ;
   this.detailPath = this.element.nativeElement.getAttribute('detailPath');
   let currentUrl = window.location.href;   
+  this.filter = " filter";
   let searchParameters = currentUrl.split('?');
   if(searchParameters[1]!=undefined){
     if (searchParameters[1].indexOf(this.wcmMode) !== -1) {
@@ -138,12 +126,11 @@ ngOnInit() {
       searchParameters[1] = this.removeURLParameter(searchParameters[1], 'cq_ck');
     }
     this.facetParameters=searchParameters[1];
-  }   
+  }  
   this.qterm = this.getParameterByName('qterm', currentUrl);
   this.ref = this.getParameterByName('ref', currentUrl);
   let parameters = this.addParam();
   let displayUrl = window.location.href
-  
   let displayUrlSplit = displayUrl.split('?');
   if(displayUrlSplit.length>1){
     let displaySplit = displayUrl.split('&id');
@@ -153,37 +140,130 @@ ngOnInit() {
       if(PageCount.length>1){
         let totalpages = PageCount[1].split('&');
         if(totalpages[0]!=""){
+          this.isBack=true;
           this.initialpageSize = parseInt(totalpages[0]);
         }
       }
    }
   }
+  this.getFacetValue(this.facetParameters,true);
   let decodedUrl=decodeURI(this.url);
-    let api=decodedUrl.split("rows=")[0];
-    
+  let api=decodedUrl.split("rows=")[0];
+  let parameter:any;
+  this.search.paramsValue='';
   if(parameters.length!=0){
-    
-     this.url= api+"rows="+this.initialpageSize+"&srt=cataloged&order=desc&"+parameters[0]["key"]+"="+parameters[0]["value"]+""; 
+    if(this.isBack){
+      parameter = this.facetParameters.split('&id');
+      parameter = parameter[0];
+     // this.facetParameters='';
+      //this.facetParameters = parameter[0];
+    }
+    else{
+      parameter= this.facetParameters;
+    }
+    this.search.paramsValue=parameter;
+      this.url= api+"os=0&rows="+this.initialpageSize+"&srt=cataloged&order=desc&"+parameter//parameters[0]["key"]+"="+parameters[0]["value"]+""; 
   }
   else{
-     this.url= api+"rows="+this.initialpageSize+"&srt=cataloged&order=desc"; 
+      this.url= api+"os=0&rows="+this.initialpageSize+"&srt=cataloged&order=desc"; 
   }
 }
 
+
+
+getFacetValue(params:any,isFacetsLoading){
+  let parameter:any;
+  if(params!=null){
+    if(this.isBack){
+      if(params.indexOf('&id')>-1){
+      parameter = params.split('&id');
+      params = parameter[0];
+    }
+    }
+  }
+  let decodedUrl=decodeURI(this.url);
+  let api=decodedUrl.split("=json")[0];
+  let facets = []
+  this.http.get(api+"=json&fct=wbg_country,wbg_year,wbg_topics,wbg_region&rows=0&facet.limit=-1&wbg_eligible_for_public_release=Yes&for_public_download=Yes").subscribe(
+    res => {
+    let facetAttribute = res["photoarchives"]["facets"];
+     let facetLabels = {
+      'wbg_topics' : 'Topics',
+      'wbg_country' : 'Country',
+      'wbg_region' : 'Region',
+      'wbg_year' : 'Year'
+      }
+
+      
+  Object.keys(facetAttribute).forEach(key => {
+    let facetsAllValues=[];
+    Object.keys(facetAttribute[key]).forEach(keys => {
+      facetsAllValues.push({
+        label:facetAttribute[key][keys].label,
+        name:facetAttribute[key][keys].name,
+        count:facetAttribute[key][keys].count,
+        checked:false
+      });
+    })
+    facets.push({
+      facetLabel: facetLabels[key],
+      facetName: key,
+      facetItems: facetsAllValues       
+    });   
+  }); 
+    this.facetsjson = facets
+  });  
+}
 ngOnChanges() {
   this.listClass = "";
   this.gridClass = "";
 }
+
+hideLoading(data:boolean){
+  if(data!=undefined){
+      this.loading=data;
+  }
+}
+
 public updateParameter(parameter: any)
 {
-  this.onLoad = true;		
-  this.loading = true;
+  this.onLoad = true;
+ 	  //this.loading = true;
+  let api:any;
   this.paramVal=parameter.split("=")[1];
   let apiUrl=decodeURI(this.url);
-  this.url= apiUrl+"&qterm="+this.paramVal+"";
+   //
+ if(parameter!=""){
+  if (this.paramVal.indexOf('wbg_topics=')!== -1 || this.paramVal.indexOf('wbg_country=')!== -1
+  || this.paramVal.indexOf('wbg_region=')!== -1|| this.paramVal.indexOf('wbg_year=')!== -1)
+  {
+    api=apiUrl.split("rows=")[0];
+    this.url= api+"&qterm="+this.paramVal+"";
+  }
+  else{
+    let params:any
+    api=decodeURI(this.url).split("os=")[0];
+    parameter = parameter.split('&id');
+   
+    this.url= api+"os=0&rows=15&srt=cataloged&order=desc&"+parameter;
+  }
+}
+else{
+  api=decodeURI(this.url).split("os=")[0];
+  this.url= api+"os=0&rows=15&srt=cataloged&order=desc";
+}
   let displayUrl = window.location.href;
   let displayUrlSplit = displayUrl.split('?');
   window.history.pushState('', '', displayUrlSplit[0] + '?' + parameter);
+  this.gallery.stratindex=0;
+  this.gallery.initialValue=0;
+  this.gallery.params=parameter;
+  this.search.paramsValue=parameter;
+  //this.search.qterm="";
+  //this.search.searchValue="";
+  this.getFacetValue(parameter,false);
+  this.gallery.getData(this.url,true);
+  
 }
 public udpatedValues(value: any) 
 {		
@@ -203,20 +283,6 @@ public changeView(view) {
 public updateFacetsCollapsed(facetsCollapsed: any) {    	
   this.isFacetsCollapsed = facetsCollapsed;
   this.sideBarArrow = this.sideBarArrow == 'fa fa-angle-left' ? 'fa fa-angle-right' : 'fa fa-angle-left';		
-}
-
-public loadMore() {	
-  this.loading = true;	
- let parameters = this.addParam();
- this.initialpageSize= this.initialpageSize+15;
- let decodedUrl=decodeURI(this.url);
-    let api=decodedUrl.split("rows=")[0];
- if(parameters.length!=0){
-  this.url= api+"rows="+this.initialpageSize+"&srt=cataloged&order=desc&"+parameters[0]["key"]+"="+parameters[0]["value"]+""; 
-}
-else{
-  this.url =  api+"rows="+this.initialpageSize+"&srt=cataloged&order=desc";
-}
 }
 
 public addParam(){
@@ -280,6 +346,4 @@ public onScrollToTop() {
 public onScrollToLoadMore() {
   document.getElementById('loadMore1').scrollIntoView(true);
 }	
-
-
 }

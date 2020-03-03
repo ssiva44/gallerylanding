@@ -1,22 +1,28 @@
 
 
 <ul class="sidebar-list"  *ngFor="let facet of facetposts; let i = index">
-   
-   
     <li class="sidebar-list-item" (click)="onCollapse(facet.facetName)">
-  
   <a class="sidebar-link" attr.aria-expanded="{{(collapseFacets | contains : facet.facetName)}}">{{facet.facetLabel |locale }}</a>
   </li>        
   <ul  class="sidebar-sublist" [@facetFadeInOut]="collapseFacets | facetAnimation : facet.facetName">
-      <li *ngFor="let word of facet.facetItems| facetContains : selectedFacetItems : facet.facetName : limitFacets : i">
-       <a href="?{{facetParameters | timeFrameContains : facet.facetName : word}}"><span class="sidebar-sublist-item">{{word}}</span><span class="list-item-num"></span></a>
-    
-       
-  <a class="remove-btn" href="?{{facetParameters | showing :facet.facetName}} " *ngIf="selectedFacetItems | objectContains : facet.facetName">
-      <i class="fa fa-times-circle-o"></i>
-  </a>
+      <div class="_loop_primary_search" *ngIf="(facet.facetItems | length) > 6 && !(selectedFacetItems | objectContains : facet.facetName)">	
+	        <input type="search" [(ngModel)]="this['facet' + i]" placeholder="{{placeholder}}" id="primary_inputs-1" >	       	        
+      </div>  
+<li *ngFor="let word of facet.facetItems| facetContains : '' : '': this['facet' + i] : limitFacets : i">
+    <div class="_loop_checkbox">
+    <input data-customlink="sf:body content" class="_loop_primary_checkbox"
+     type="checkbox" [checked]="selectedFace  | checked : facet.facetName : word.name"
+     (change)="onFacetItem(facet.facetName, word.name)"/>
+    <label for="srchwtn">
+        <div class="sidebar-sublist_wrapper">
+          <span class="sidebar-sublist-item">{{word.label}} &nbsp;</span>
+          <span>({{word.count}})</span>
+        </div>
+      </label>
+    </div>
 </li>
-  <li class="expand-link" *ngIf="(facet.facetItems | length) > 6 && !(selectedFacetItems | objectContains : facet.facetName)">
+
+  <li class="expand-link" *ngIf="(facet.facetItems | length) > 6">
 			<a *ngIf="!(limitFacets | contains : i)" (click)="onSeeMore(i); false">See More +</a>
 			<a *ngIf="(limitFacets | contains : i)" (click)="onSeeLess(i); false">See Less -</a>		
 		</li>
