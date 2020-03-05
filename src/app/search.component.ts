@@ -77,7 +77,7 @@ export class SearchComponent {
 		}
 		  if(parameters!='' && parameters.indexOf('&')>-1){ 
 			parameters = parameters.substring(0,parameters.length-1)
-		}
+		  }
 		isqterm='';
 		return parameters;
 	  }
