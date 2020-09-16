@@ -147,6 +147,7 @@ ngOnInit() {
    }
   }
   this.getFacetValue(this.facetParameters,true);
+  
   let decodedUrl=decodeURI(this.url);
   let api=decodedUrl.split("rows=")[0];
   let parameter:any;
@@ -155,7 +156,7 @@ ngOnInit() {
     if(this.isBack){
       parameter = this.facetParameters.split('&id');
       parameter = parameter[0];
-     // this.facetParameters='';
+     // this.facetParameters='';ss
       //this.facetParameters = parameter[0];
     }
     else{
@@ -172,26 +173,31 @@ ngOnInit() {
 
 
 getFacetValue(params:any,isFacetsLoading){
+    debugger
   let parameter:any;
-  if(params!=null){
-    if(this.isBack){
-      if(params.indexOf('&id')>-1){
-      parameter = params.split('&id');
+  let apiURL:any;
+  let paraURL="=json&fct=wbg_country,wbg_decade,wbg_topics,wbg_region&rows=0&facet.limit=-1&wbg_eligible_for_public_release=Yes&for_public_download=Yes&srt=cataloged&order=desc";
+  
+  if(params!=null&&this.isBack&&params.indexOf('&id')>-1){
+    apiURL = "";
+    parameter = params.split('&id');
       params = parameter[0];
-    }
-    }
+      apiURL = paraURL+"&"+params;
+  }else{
+    apiURL = paraURL+"&"+params;;
   }
+  let test = this.facetParameters;
   let decodedUrl=decodeURI(this.url);
   let api=decodedUrl.split("=json")[0];
   let facets = []
-  this.http.get(api+"=json&fct=wbg_country,wbg_year,wbg_topics,wbg_region&rows=0&facet.limit=-1&wbg_eligible_for_public_release=Yes&for_public_download=Yes").subscribe(
+  this.http.get(api+apiURL).subscribe(
     res => {
     let facetAttribute = res["photoarchives"]["facets"];
      let facetLabels = {
       'wbg_topics' : 'Topics',
       'wbg_country' : 'Country',
       'wbg_region' : 'Region',
-      'wbg_year' : 'Year'
+      'wbg_decade' : 'Year'
       }
 
       
@@ -235,7 +241,7 @@ public updateParameter(parameter: any)
    //
  if(parameter!=""){
   if (this.paramVal.indexOf('wbg_topics=')!== -1 || this.paramVal.indexOf('wbg_country=')!== -1
-  || this.paramVal.indexOf('wbg_region=')!== -1|| this.paramVal.indexOf('wbg_year=')!== -1)
+  || this.paramVal.indexOf('wbg_region=')!== -1|| this.paramVal.indexOf('wbg_decade=')!== -1)
   {
     api=apiUrl.split("rows=")[0];
     this.url= api+"&qterm="+this.paramVal+"";
@@ -290,7 +296,7 @@ public addParam(){
   if (this.facetParameters != '' &&  this.facetParameters != undefined) {       
     this.facetParameters.split('&').forEach(query => {
       let term  = query.split('=');               
-      if (term[0]== 'qterm' || term[0]=='wbg_topics' || term[0]=='wbg_country'|| term[0] =='wbg_region' || term[0] =='wbg_year')  {
+      if (term[0]== 'qterm' || term[0]=='wbg_topics' || term[0]=='wbg_country'|| term[0] =='wbg_region' || term[0] =='wbg_decade')  {
         parameters.push({
           key : term[0],
           value : term[1]

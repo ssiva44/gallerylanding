@@ -34,6 +34,7 @@ export class MobileFacetsComponent {
 @Output() isCollapsedOut = new EventEmitter<boolean>();
 @Output() selectedFacet = new EventEmitter<any>();
 @Output() outFacet = new EventEmitter<any>();
+@Output() goFacet = new EventEmitter<any>();
 @Output() deselectedFacet = new EventEmitter<any>();
 @Output() outParameters = new EventEmitter<string>();
 seeMore: string = 'SeeMore';
@@ -75,7 +76,7 @@ this.selectedFacetItems = selectedFacets;
 this.selectedItems=[];
 Object.keys(this.selectedFacetItems).forEach(term => {
 
-	if (term.indexOf('qterm') !=-1  || term.indexOf('wbg_topics') !=-1 ||  term.indexOf('wbg_country') !=-1 || term.indexOf('wbg_region') !=-1  || term.indexOf('wbg_year') !=-1)  {
+	if (term.indexOf('qterm') !=-1  || term.indexOf('wbg_topics') !=-1 ||  term.indexOf('wbg_country') !=-1 || term.indexOf('wbg_region') !=-1  || term.indexOf('wbg_decade') !=-1)  {
 	this.selectedFacetItems[term].split('%5E').forEach((val) => {
 		let keyValue=term;
 		if(this.selectedItems!=null){
@@ -98,6 +99,9 @@ Object.keys(this.selectedFacetItems).forEach(term => {
 }
 public onFacetItem(facet, itemName,isChecked) {
 	this.outFacet.emit({ facet: facet, itemName: itemName });
+}
+public goCheckedValue(){
+ this.goFacet.emit();
 }
 public onSeeMore(index) {
 	this.limitFacets.push(index);		

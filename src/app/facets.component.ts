@@ -38,6 +38,7 @@ export class FacetsComponent{
 	facetjson:any;
 	placeholder: string;
 	finalValue:any[]=[];
+	finalFacets:string="";
 	constructor(private http:HttpClient){ }
 	ngOnInit() {
 	
@@ -178,7 +179,7 @@ export class FacetsComponent{
 			}		
 						
 			Object.keys(this.selectedFace).forEach((facetName) => {
-				if (facetName== 'qterm' || facetName=='wbg_topics' || facetName=='wbg_country'|| facetName =='wbg_region' || facetName =='wbg_year')  {
+				if (facetName== 'qterm' || facetName=='wbg_topics' || facetName=='wbg_country'|| facetName =='wbg_region' || facetName =='wbg_decade')  {
 				let facetItems = this.selectedFace[facetName];			
 				if (facetItems.length != 0) {
 					finalFacets = finalFacets == '' ? facetName + '=' + facetItems.join('%5E') : finalFacets + '&' + facetName + '=' + facetItems.join('%5E');	
@@ -188,10 +189,21 @@ export class FacetsComponent{
 			
 			this.facetParameters='';
 			this.facetParameters =	finalFacets;
-			this.selectedFacets.emit(this.selectedFace); 
-			this.outParameters.emit(finalFacets);
+
+			this.finalFacets  = finalFacets;
+			
 		};
-		
+
+goCheckedValue(){
+	this.selectedFacets.emit(this.selectedFace); 
+	this.outParameters.emit(this.finalFacets);
+}
+public onClearAll() {	
+	let displayUrl = window.location.href;
+	let displayUrlSplit = displayUrl.split('?');
+	window.history.pushState('', '', displayUrlSplit[0]);
+	location.reload();      
+  }		
 }
         
           

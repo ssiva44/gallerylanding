@@ -155,7 +155,7 @@ public addParam(){
     if (this.facetParameters != '' &&  this.facetParameters != undefined) {       
       this.facetParameters.split('&').forEach(query => {
         let term  = query.split('=');               
-        if (term[0]== 'qterm' || term[0]=='wbg_topics' || term[0]=='wbg_country'|| term[0] =='wbg_region' || term[0] =='wbg_year')  {
+        if (term[0]== 'qterm' || term[0]=='wbg_topics' || term[0]=='wbg_country'|| term[0] =='wbg_region' || term[0] =='wbg_decade')  {
           parameters.push({
             key : term[0],
             value : term[1]

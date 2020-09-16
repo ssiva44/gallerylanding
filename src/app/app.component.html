@@ -47,9 +47,7 @@
                   <div id="sidebar-wrapper">
                       <div class="sidebar-heading">
                           <i class="fa fa-list-ul"></i><h4 class="h4 filter-align">{{filter}}</h4>
-                          <div class="clear-all">
-                              <button type="button" class="reset-btn" (click)="onClearAll()">Clear All x</button>
-                          </div>
+                          
                       </div>
 <facets #facet [facetParameters]="facetParameters"  [facetsjson]="facetsjson"
  (selectedFacets)="mobileFacets.getSelectedFacets($event)" 
@@ -61,7 +59,8 @@
           </div>
 
         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12" [ngClass]="{'right-section': isFacetsCollapsed}">
-          <search [url]="url" [facetParameters]="facetParameters"  [qterm]="qterm"  (outParameters)="updateParameter($event)" ></search>
+          <search [url]="url" [facetParameters]="facetParameters"  [qterm]="qterm"  
+          (outParameters)="updateParameter($event)" ></search>
 
             <div class="row">
                <div class="col-lg-12 col-md-12 col-sm-8 col-xs-12">
@@ -94,7 +93,9 @@
                 <mobilefacets #mobileFacets [isCollapsed]="isCollapsed"  
                 [facetParameters]="facetParameters"
                  [facetsjson]="facetsjson" (outParameters)="updateParameter($event)"
-                 (outFacet)="facet.onFacetItem($event.facet, $event.itemName)"></mobilefacets> 
+                 (outFacet)="facet.onFacetItem($event.facet, $event.itemName)"
+                 (goFacet)="facet.goCheckedValue()"
+                 ></mobilefacets> 
                </div>
                <hr>
     <gallery [facetParameters]="facetParameters" (loading)="hideLoading($event)" 

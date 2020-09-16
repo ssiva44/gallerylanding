@@ -1,4 +1,8 @@
 
+<div class="left-right">
+  <button type="button" class="go-btn" (click)="goCheckedValue()">Go</button>
+  <button type="button" class="reset-btn" (click)="onClearAll()">Clear All x</button>
+</div>
 
 <ul class="sidebar-list"  *ngFor="let facet of facetposts; let i = index">
     <li class="sidebar-list-item" (click)="onCollapse(facet.facetName)">

@@ -56,7 +56,7 @@ export class SearchComponent {
 			params = isqterm.split('&');
 			params.forEach(query => {
 				let term  = query.split('=');               
-				if (term[0]=='wbg_topics' || term[0]=='wbg_country'|| term[0] =='wbg_region' || term[0] =='wbg_year')  {
+				if (term[0]=='wbg_topics' || term[0]=='wbg_country'|| term[0] =='wbg_region' || term[0] =='wbg_decade')  {
 					parameters += term[0]+"="+term[1]+"&"
 				}      
 				if (term[0]== 'qterm'){
